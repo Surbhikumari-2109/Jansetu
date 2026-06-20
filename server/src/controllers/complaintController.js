@@ -262,7 +262,7 @@ export const updateWorkerProgress = async (req, res) => {
   }
 };
 
-// Function jo database se users nikal kar layega
+// Functn jo database se users nikal kar layega
 export const getUsersByRole = async (req, res) => {
   const { role } = req.query;
   try {
