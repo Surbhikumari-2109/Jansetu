@@ -57,6 +57,7 @@ export const authorize = (...roles) => {
           "Access denied",
       });
     }
+  console.log("Current user role attempting to access route:", req.user?.role);
 
     next();
   };

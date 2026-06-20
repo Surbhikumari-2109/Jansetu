@@ -38,6 +38,22 @@ const complaintSchema = new mongoose.Schema(
         "Pollution Complaint",
       ],
     },
+    department: {
+    type: String,
+    required: true,
+    enum: [
+      "Water Supply Board",
+      "Sanitation & Waste Management",
+      "Roads & Infrastructure",
+      "Electrical Maintenance",
+      "Parks & Public Gardens",
+      "Sewage & Drainage Board",
+      "Public Health & Safety",
+      "Street Light Maintenance",
+      "Civil Supplies & Distribution",
+      "Disaster Management Cell"
+    ]
+  },
 
     priority: {
       type: String,
@@ -63,7 +79,9 @@ const complaintSchema = new mongoose.Schema(
       ],
       default: "pending",
     },
-
+  progressNote: {
+  type: String,
+},
     district: {
       type: String,
       required: true,
@@ -87,8 +105,6 @@ const complaintSchema = new mongoose.Schema(
     latitude: Number,
 
     longitude: Number,
-
-    images: [String],
 
     citizen: {
       type: mongoose.Schema.Types.ObjectId,

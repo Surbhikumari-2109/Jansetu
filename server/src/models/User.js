@@ -42,6 +42,11 @@ const userSchema = new mongoose.Schema(
     block: {
       type: String,
     },
+    department: {
+  type: String,
+  required: function() { return this.role === 'worker'; }, // Workers ke liye compulsory kar dein
+},
+contact: { type: String, required: true },
 
     avatar: {
       type: String,

@@ -11,11 +11,11 @@ export const register = async (req, res) => {
       phone,
       district,
       block,
+      role, // Added role
+      department // Added department for workers
     } = req.body;
 
-    const existingUser = await User.findOne({
-      email,
-    });
+    const existingUser = await User.findOne({ email });
 
     if (existingUser) {
       return res.status(400).json({
@@ -24,8 +24,7 @@ export const register = async (req, res) => {
       });
     }
 
-    const hashedPassword =
-      await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
       fullName,
@@ -34,12 +33,11 @@ export const register = async (req, res) => {
       phone,
       district,
       block,
+      role: role || 'citizen', // Default to citizen if no role provided
+      department: role === 'worker' ? department : undefined // Only save department if the user is a worker
     });
 
-    const token = generateToken(
-      user._id,
-      user.role
-    );
+    const token = generateToken(user._id, user.role);
 
     res.status(201).json({
       success: true,
@@ -53,14 +51,15 @@ export const register = async (req, res) => {
     });
   }
 };
+
 export const login = async (req, res) => {
+  console.log("Login attempt received for:", req.body.email);
   try {
-    const { email, password } = req.body;
+    // Added portalType to check where the login is coming from
+    const { email, password, portalType } = req.body;
 
-    const user = await User.findOne({
-      email,
-    });
-
+    const user = await User.findOne({ email });
+    
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -68,10 +67,19 @@ export const login = async (req, res) => {
       });
     }
 
-    const isMatch = await bcrypt.compare(
-      password,
-      user.password
-    );
+    // --- NEW: Security Check for Official Portal ---
+    const isOfficialPortal = portalType === 'official';
+    const isOfficialUser = ['officer', 'admin'].includes(user.role);
+
+    if (isOfficialPortal && !isOfficialUser) {
+       return res.status(403).json({ 
+         success: false,
+         message: "Access denied. You do not have official credentials." 
+       });
+    }
+    // -----------------------------------------------
+
+    const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return res.status(401).json({
@@ -80,10 +88,7 @@ export const login = async (req, res) => {
       });
     }
 
-    const token = generateToken(
-      user._id,
-      user.role
-    );
+    const token = generateToken(user._id, user.role);
 
     res.status(200).json({
       success: true,

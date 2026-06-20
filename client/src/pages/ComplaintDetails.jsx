@@ -91,17 +91,17 @@ const ComplaintDetails = () => {
             <p className="text-gray-500 mb-3">Evidence Photos</p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {complaint.images.map((image, index) => (
-                <a
-                  key={index}
-                  href={image}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <img
-                    src={image}
-                    alt={`Evidence ${index + 1}`}
-                    className="
+  {complaint.images.map((image, index) => (
+    <a
+      key={index}
+      href={image}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <img
+        src={image}
+        alt={`Evidence ${index + 1}`}
+        className="
           w-full
           h-48
           object-cover
@@ -112,10 +112,10 @@ const ComplaintDetails = () => {
           transition
           cursor-pointer
         "
-                  />
-                </a>
-              ))}
-            </div>
+      />
+    </a>
+  ))}
+</div>
           </div>
         )}
       </div>
