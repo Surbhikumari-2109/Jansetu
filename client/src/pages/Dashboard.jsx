@@ -12,7 +12,7 @@ import {
   X, 
   PlusCircle, 
   Search,
-  UserCheck 
+  UserCircle 
 } from "lucide-react";
 import CreateComplaint from "../components/CreateComplaint";
 import ComplaintTracker from "../components/ComplaintTracker";
@@ -107,9 +107,9 @@ const Dashboard = () => {
 
           {/* CITIZEN PORTAL BADGE (Stays anchored on the top navigation bar natively) */}
           <div className="flex items-center pl-4 pr-2 sm:px-4">
-            <button className="px-4 py-2 sm:px-6 sm:py-4 text-xs sm:text-sm font-bold uppercase tracking-wider border-b-4 border-orange-500 text-white bg-white/10 sm:bg-white/5 flex items-center gap-2 rounded">
-              <UserCheck className="h-4 w-4" />
-              <span>Citizen Portal</span>
+            <button className="px-4 py-2 sm:px-6 sm:py-4 text-xs sm:text-sm font-bold uppercase tracking-wider border-b-4 text-white bg-white/10 sm:bg-white/5 flex items-center gap-2 rounded">
+              <UserCircle className="h-4 w-4" />
+              <span>Citizen Panel</span>
             </button>
           </div>
 
