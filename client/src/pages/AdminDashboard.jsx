@@ -1,6 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { 
+  Building2, 
+  LogOut, 
+  Users, 
+  UserCircle,
+  UserPlus, 
+  ClipboardList, 
+  Menu, 
+  X, 
+  Bell, 
+  ShieldAlert,
+  MapPin,
+  AlertCircle,
+  Eye,       
+  EyeOff     
+} from 'lucide-react';
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
@@ -11,8 +27,16 @@ const AdminDashboard = () => {
     contact: '', 
     password: '', 
     role: 'worker', 
-    department: '' 
+    department: '',
+    ward: ''
   });
+  
+  // States for inline input errors across all inputs
+  const [formErrors, setFormErrors] = useState({});
+  
+  // 📍 State for toggling password visibility
+  const [showPassword, setShowPassword] = useState(false);
+  
   const [isLoading, setIsLoading] = useState(false);
   const [adminName, setAdminName] = useState('Admin');
   
@@ -93,18 +117,40 @@ const AdminDashboard = () => {
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    
+    // Typing ke waqt agar error ho toh use hide/clear karte jayein
+    if (formErrors[e.target.name]) {
+      setFormErrors({ ...formErrors, [e.target.name]: '' });
+    }
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
     
+    const errors = {};
+    
+    if (!formData.fullName.trim()) {
+      errors.fullName = 'Full name is required.';
+    }
+    if (!formData.email.trim()) {
+      errors.email = 'Email address is required.';
+    }
+    if (!formData.contact.trim()) {
+      errors.contact = 'Contact number is required.';
+    }
+    if (!formData.password) {
+      errors.password = 'Security password is required.';
+    }
     if (formData.role === 'worker' && !formData.department) {
-      alert('Please assign a department for the field worker.');
-      return;
+      errors.department = 'Please assign a department for the field worker.';
+    }
+    if (formData.role === 'officer' && (!formData.ward || !formData.ward.trim())) {
+      errors.ward = 'Please assign a ward number for the municipal officer.';
     }
 
-    if (!formData.contact) {
-      alert('Contact number is required.');
+    // Agar koi bhi error object mein exist karta ho toh execution rok dein
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
       return;
     }
 
@@ -114,8 +160,9 @@ const AdminDashboard = () => {
       await axios.post('http://localhost:5000/api/admin/register-official', formData, {
         headers: { Authorization: 'Bearer ' + token }
       });
-      alert('Official registered successfully!');
-      setFormData({ fullName: '', email: '', contact: '', password: '', role: 'worker', department: '' });
+      alert(' Registered successfully!');
+      setFormData({ fullName: '', email: '', contact: '', password: '', role: 'worker', department: '', ward: '' });
+      setFormErrors({});
       fetchAdminData();
     } catch (error) {
       alert(error.response?.data?.message || 'Registration failed.');
@@ -130,7 +177,7 @@ const AdminDashboard = () => {
     navigate('/login');
   };
 
- const handleAssignResolve = async (id, nextStatus, assigneeId = '') => {
+  const handleAssignResolve = async (id, nextStatus, assigneeId = '') => {
     try {
       const token = localStorage.getItem('token');
       const payload = { status: nextStatus };
@@ -148,6 +195,7 @@ const AdminDashboard = () => {
       alert(err.response?.data?.message || "Failed to update status.");
     }
   };
+
   // Function to call API & populate the custom modal list
   const showUserDirectoryModal = async (roleType, titleLabel) => {
     setIsDirLoading(true);
@@ -173,7 +221,10 @@ const AdminDashboard = () => {
       <nav className="bg-slate-900 text-white sticky top-0 z-50 shadow-md mb-8">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-2 md:py-0">
           <div className="flex items-center gap-2 py-4 border-r border-slate-700 pr-8">
-            <span className="text-xl font-black tracking-tight">🏙️ JAN<span className="text-orange-500">SETU</span></span>
+            <Building2 className="h-6 w-6 text-orange-500" />
+            <span className="text-xl font-black tracking-tight flex items-center gap-1">
+              JAN<span className="text-orange-500">SETU</span>
+            </span>
           </div>
 
           {/* HAMBURGER MENU ICON (Visible on mobile screens) */}
@@ -182,28 +233,20 @@ const AdminDashboard = () => {
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="text-white focus:outline-none p-2 rounded-lg hover:bg-slate-800"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                {isMobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                  ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
 
           {/* Desktop Navigation Actions */}
           <div className="hidden md:flex items-center space-x-1 px-4">
-            <span className="px-4 py-4 text-sm font-bold uppercase tracking-wider text-orange-400 bg-orange-950/30 rounded-lg">
-              ⚡ Super Admin Panel
+            <span className="px-4 py-2 text-sm font-bold uppercase tracking-wider text-orange-400 bg-orange-950/30 rounded-lg flex items-center gap-2">
+              <UserCircle className="h-4 w-4" /> Super Admin Panel
             </span>
             <button 
               onClick={handleLogout} 
               className="px-4 py-4 text-sm font-bold uppercase tracking-wider text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors flex items-center gap-2 cursor-pointer"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
+              <LogOut className="h-5 w-5" />
               Logout
             </button>
           </div>
@@ -214,23 +257,28 @@ const AdminDashboard = () => {
           <div className="md:hidden bg-slate-800 px-6 py-4 space-y-4 border-t border-slate-700 shadow-inner">
             <div className="flex flex-col space-y-3 pb-3 border-b border-slate-700">
                <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1">Direct Function Access</span>
-               <a href="#system-metrics" className="text-slate-300 font-bold text-xs uppercase py-1.5 hover:text-orange-400" onClick={() => setIsMobileMenuOpen(false)}>System Status</a>
-               <a href="#database-reg" className="text-slate-300 font-bold text-xs uppercase py-1.5 hover:text-orange-400" onClick={() => setIsMobileMenuOpen(false)}>Database Directory</a>
-               <a href="#staff-onboard" className="text-slate-300 font-bold text-xs uppercase py-1.5 hover:text-orange-400" onClick={() => setIsMobileMenuOpen(false)}>Staff Registration</a>
-               <a href="#active-issues" className="text-slate-300 font-bold text-xs uppercase py-1.5 hover:text-orange-400" onClick={() => setIsMobileMenuOpen(false)}>Issues Review</a>
+               <a href="#system-metrics" className="text-slate-300 font-bold text-xs uppercase py-1.5 hover:text-orange-400 flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
+                <Bell className="h-4 w-4" /> System Status
+               </a>
+               <a href="#database-reg" className="text-slate-300 font-bold text-xs uppercase py-1.5 hover:text-orange-400 flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
+                <Users className="h-4 w-4" /> Database Directory
+               </a>
+               <a href="#staff-onboard" className="text-slate-300 font-bold text-xs uppercase py-1.5 hover:text-orange-400 flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
+                <UserPlus className="h-4 w-4" /> Staff Registration
+               </a>
+               <a href="#active-issues" className="text-slate-300 font-bold text-xs uppercase py-1.5 hover:text-orange-400 flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
+                <ClipboardList className="h-4 w-4" /> Issues Review
+               </a>
             </div>
             <div className="flex justify-between items-center pt-2 mt-2">
-              <span className="px-3 py-1.5 text-[9px] font-extrabold uppercase tracking-wider text-orange-400 bg-orange-950/40 rounded-lg">
-                ⚡ Super Admin Panel
+              <span className="px-3 py-1.5 text-[9px] font-extrabold uppercase tracking-wider text-orange-400 bg-orange-950/40 rounded-lg flex items-center gap-1">
+                <UserCircle className="h-3 w-3" /> Super Admin Panel
               </span>
               <button 
                 onClick={handleLogout} 
                 className="text-red-400 text-xs font-black uppercase tracking-wider flex items-center gap-2 cursor-pointer"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-                Logout
+                <LogOut className="h-4 w-4" /> Logout
               </button>
             </div>
           </div>
@@ -248,19 +296,19 @@ const AdminDashboard = () => {
         {stats && (
           <div id="system-metrics" className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-t-4 border-t-blue-500">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total System Reports</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Total System Reports</span>
               <h2 className="text-4xl font-black mt-2 text-slate-900">{complaints.length}</h2>
             </div>
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-t-4 border-t-red-500">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Unassigned / Pending</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Unassigned / Pending</span>
               <h2 className="text-4xl font-black mt-2 text-slate-900">{complaints.filter(c => c.status === "pending").length}</h2>
             </div>
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-t-4 border-t-orange-500">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">In Progress/Assigned</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">In Progress/Assigned</span>
               <h2 className="text-4xl font-black mt-2 text-slate-900">{complaints.filter(c => c.status === "in-progress" || c.status === "assigned").length}</h2>
             </div>
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-t-4 border-t-emerald-500">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Resolved Issues</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Resolved Issues</span>
               <h2 className="text-4xl font-black mt-2 text-slate-900">{complaints.filter(c => c.status === "resolved").length}</h2>
             </div>
           </div>
@@ -270,39 +318,49 @@ const AdminDashboard = () => {
           {/* CLICKABLE DATABASE REGISTRATIONS */}
           {stats && (
             <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 h-fit">
-              <h3 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-4 mb-6">Database Registrations</h3>
+              <h3 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-4 mb-6 flex items-center gap-2">
+                <Building2 className="h-5 w-5 text-slate-500" /> Database Registrations
+              </h3>
               <div className="space-y-4">
                 <button 
-                  onClick={() => showUserDirectoryModal('citizen', '👥 Registered Citizens Directory')}
+                  onClick={() => showUserDirectoryModal('citizen', 'Registered Citizens Directory')}
                   className="w-full flex justify-between items-center bg-slate-50 p-4 rounded-xl hover:bg-orange-50/50 transition-colors border border-transparent hover:border-orange-200 cursor-pointer"
                 >
-                  <span className="font-bold text-sm text-slate-600">Citizens Registered</span>
+                  <span className="font-bold text-sm text-slate-600 flex items-center gap-2">
+                    <Users className="h-4 w-4 text-slate-400" /> Citizens Registered
+                  </span>
                   <span className="font-black text-slate-900">{stats.users.citizens}</span>
                 </button>
                 <button 
-                  onClick={() => showUserDirectoryModal('officer', '👥 Municipal Officers Directory')}
+                  onClick={() => showUserDirectoryModal('officer', 'Municipal Officers Directory')}
                   className="w-full flex justify-between items-center bg-slate-50 p-4 rounded-xl hover:bg-orange-50/50 transition-colors border border-transparent hover:border-orange-200 cursor-pointer"
                 >
-                  <span className="font-bold text-sm text-slate-600">Municipal Officers</span>
+                  <span className="font-bold text-sm text-slate-600 flex items-center gap-2">
+                    <Users className="h-4 w-4 text-slate-400" /> Municipal Officers
+                  </span>
                   <span className="font-black text-slate-900">{stats.users.officers}</span>
                 </button>
                 <button 
-                  onClick={() => showUserDirectoryModal('worker', '👥 Field Workers Directory')}
+                  onClick={() => showUserDirectoryModal('worker', 'Field Workers Directory')}
                   className="w-full flex justify-between items-center bg-slate-50 p-4 rounded-xl hover:bg-orange-50/50 transition-colors border border-transparent hover:border-orange-200 cursor-pointer"
                 >
-                  <span className="font-bold text-sm text-slate-600">Field Workers</span>
+                  <span className="font-bold text-sm text-slate-600 flex items-center gap-2">
+                    <Users className="h-4 w-4 text-slate-400" /> Field Workers
+                  </span>
                   <span className="font-black text-slate-900">{stats.users.workers}</span>
                 </button>
               </div>
             </div>
           )}
 
-          {/* REGISTER STAFF ACCOUNT FORM */}
+          {/* REGISTER STAFF ACCOUNT FORM WITH INLINE VALIDATION WARNINGS */}
           <div id="staff-onboard" className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2">
-            <h3 className="text-xl font-black text-slate-900 mb-2">➕ Register Staff Account</h3>
-            <p className="text-slate-500 text-sm font-medium mb-6">Create operational administrative profiles for officers or field ground-staff.</p>
+            <h3 className="text-xl font-black text-slate-900 mb-2 flex items-center gap-2">
+              <UserPlus className="h-6 w-6 text-orange-500" /> Register Staff Account
+            </h3>
+            {/* <p className="text-slate-500 text-sm font-medium mb-6">Create operational administrative profiles for officers or field ground-staff.</p> */}
 
-            <form onSubmit={handleRegister} className="space-y-5">
+            <form onSubmit={handleRegister} className="space-y-4">
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-1">Full Name</label>
                 <input 
@@ -310,23 +368,23 @@ const AdminDashboard = () => {
                   name="fullName"
                   value={formData.fullName}
                   onChange={handleInputChange}
-                  required 
                   className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 font-medium outline-none" 
                   placeholder="e.g. Rajesh Kumar" 
                 />
+                {formErrors.fullName && <p className="text-red-600 font-extrabold text-xs mt-1.5 flex items-center gap-1"><AlertCircle className="h-3.5 w-3.5" />{formErrors.fullName}</p>}
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">Email / Official Handle</label>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Email</label>
                 <input 
                   type="email" 
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  required 
                   className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 font-medium outline-none" 
                   placeholder="officer@jansetu.gov.in" 
                 />
+                {formErrors.email && <p className="text-red-600 font-extrabold text-xs mt-1.5 flex items-center gap-1"><AlertCircle className="h-3.5 w-3.5" />{formErrors.email}</p>}
               </div>
 
               {/* Contact Number Field */}
@@ -337,27 +395,37 @@ const AdminDashboard = () => {
                   name="contact"
                   value={formData.contact}
                   onChange={handleInputChange}
-                  required 
                   className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 font-medium outline-none" 
                   placeholder="e.g. 9876543210" 
                 />
+                {formErrors.contact && <p className="text-red-600 font-extrabold text-xs mt-1.5 flex items-center gap-1"><AlertCircle className="h-3.5 w-3.5" />{formErrors.contact}</p>}
               </div>
 
+              {/*  PASSWORD FIELD WITH EYE TOGGLE ICON */}
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-1">Secure Password</label>
-                <input 
-                  type="password" 
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  required 
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 font-medium outline-none" 
-                  placeholder="••••••••" 
-                />
+                <div className="relative">
+                  <input 
+                    type={showPassword ? "text" : "password"} 
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 font-medium outline-none pr-12" 
+                    placeholder="••••••••" 
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer outline-none"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+                {formErrors.password && <p className="text-red-600 font-extrabold text-xs mt-1.5 flex items-center gap-1"><AlertCircle className="h-3.5 w-3.5" />{formErrors.password}</p>}
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">Assign Clearance Role</label>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Assign Role</label>
                 <select 
                   name="role"
                   value={formData.role}
@@ -379,7 +447,6 @@ const AdminDashboard = () => {
                     value={formData.department}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 font-medium outline-none bg-white"
-                    required
                   >
                     <option value="">-- Select Department --</option>
                     <option value="Water Supply Board">Water Supply Board</option>
@@ -392,13 +459,30 @@ const AdminDashboard = () => {
                     <option value="Street Light Maintenance">Street Light Maintenance</option>
                     <option value="Civil Supplies & Distribution">Civil Supplies & Distribution</option>
                   </select>
+                  {formErrors.department && <p className="text-red-600 font-extrabold text-xs mt-1.5 flex items-center gap-1"><AlertCircle className="h-3.5 w-3.5" />{formErrors.department}</p>}
+                </div>
+              )}
+              
+              {/* MUNICIPAL OFFICER WARD SECTION */}
+              {formData.role === 'officer' && (
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-1">Assign to Ward</label>
+                  <input 
+                    type="text" 
+                    name="ward"
+                    value={formData.ward}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 font-medium outline-none" 
+                    placeholder="e.g. Ward 30 & 32" 
+                  />
+                  {formErrors.ward && <p className="text-red-600 font-extrabold text-xs mt-1.5 flex items-center gap-1"><AlertCircle className="h-3.5 w-3.5" />{formErrors.ward}</p>}
                 </div>
               )}
 
               <button 
                 type="submit" 
                 disabled={isLoading}
-                className={`w-full py-4 rounded-xl font-bold text-white transition-all ${isLoading ? 'bg-slate-400 cursor-not-allowed' : 'bg-slate-900 hover:bg-slate-800'}`}
+                className={`w-full py-4 rounded-xl font-bold text-white transition-all cursor-pointer mt-2 ${isLoading ? 'bg-slate-400 cursor-not-allowed' : 'bg-slate-900 hover:bg-slate-800'}`}
               >
                 {isLoading ? 'Registering Official...' : 'Register Profile'}
               </button>
@@ -416,7 +500,7 @@ const AdminDashboard = () => {
                      onClick={() => setIsDirModalOpen(false)}
                      className="text-slate-400 hover:text-slate-600 bg-slate-50 p-2.5 rounded-xl outline-none cursor-pointer"
                   >
-                     ✕
+                     <X className="h-5 w-5" />
                   </button>
                </div>
                
@@ -434,6 +518,7 @@ const AdminDashboard = () => {
                                  <th className="py-4 px-4">Email Address</th>
                                  <th className="py-4 px-4">Contact</th>
                                  {dirUsersList[0]?.department && <th className="py-4 px-4">Department</th>}
+                                 {dirUsersList[0]?.ward && <th className="py-4 px-4">Ward/Block</th>}
                               </tr>
                            </thead>
                            <tbody className="divide-y divide-slate-100 text-sm font-semibold text-slate-700">
@@ -443,6 +528,7 @@ const AdminDashboard = () => {
                                     <td className="py-4 px-4 text-slate-500">{u.email}</td>
                                     <td className="py-4 px-4">{u.contact || 'N/A'}</td>
                                     {u.department && <td className="py-4 px-4">{u.department}</td>}
+                                    {u.ward && <td className="py-4 px-4">{u.ward}</td>}
                                  </tr>
                               ))}
                            </tbody>
@@ -457,7 +543,9 @@ const AdminDashboard = () => {
         {/* Active Issues Directory / Side Panel Review Shielded Layout */}
         <div id="active-issues" className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 mt-12 grid lg:grid-cols-3 gap-8 items-start">
           <div className="lg:col-span-2 border-r border-slate-100 pr-4">
-            <h2 className="text-xl font-black text-slate-900 pb-4 mb-4 border-b border-slate-100">⚙️ Active Issues Management & Review</h2>
+            <h2 className="text-xl font-black text-slate-900 pb-4 mb-4 border-b border-slate-100 flex items-center gap-2">
+              <ClipboardList className="h-6 w-6 text-slate-800" /> Active Issues Management & Review
+            </h2>
             {complaints.length === 0 ? (
               <p className="text-xs font-bold text-slate-400 text-center py-8">No issues reported in the system yet.</p>
             ) : (
@@ -493,7 +581,7 @@ const AdminDashboard = () => {
             {activeComplaint ? (
               <div className="space-y-4 w-full">
                 <div>
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-wide">Selected Issue Details</span>
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-wide block">Selected Issue Details</span>
                   <h3 className="font-black text-base text-slate-900 mt-0.5">{activeComplaint.title || activeComplaint.issueType}</h3>
                 </div>
                 <p className="text-xs font-semibold text-slate-600 bg-white p-3 rounded-xl border border-slate-100">{activeComplaint.description || activeComplaint.remarks || "No description provided for this report."}</p>
@@ -513,7 +601,7 @@ const AdminDashboard = () => {
                 {/* ASSIGNMENT WORKFLOW DROPDOWN INTEGRATION */}
                 <div className="pt-4 border-t border-slate-200 space-y-4">
                    {activeComplaint.status === "pending" && (
-                      <>
+                     <>
                         <div>
                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wide mb-1.5">Directly Assign Action To Staff</label>
                            <select 
@@ -523,20 +611,20 @@ const AdminDashboard = () => {
                            >
                               {deptUsers.length > 0 ? (
                                  <>
-                                    <option value="">-- Select person from {activeComplaint.department } --</option>
+                                    <option value="">Select person from {activeComplaint.department } </option>
                                     {deptUsers.map(u => (
                                        <option key={u._id} value={u._id}>{u.fullName} ({u.role.toUpperCase()})</option>
                                     ))}
                                  </>
                               ) : (
-                                 <option value="">-- No staff available in this department --</option>
+                                 <option value=""> No staff available in this department </option>
                               )}
                            </select>
                         </div>
                         <button 
                            onClick={() => {
                               if (!selectedAssignee) {
-                                 alert("Kripya complaint assign karne ke liye department se ek staff member select karein!");
+                                 alert("Please select a staff member from the department to assign the complaint!");
                                  return;
                               }
                               handleAssignResolve(activeComplaint._id, "in-progress", selectedAssignee);
@@ -545,8 +633,8 @@ const AdminDashboard = () => {
                         >
                            Assign & Proceed Action
                         </button>
-                      </>
-                    )}
+                     </>
+                   )}
 
                     {(activeComplaint.status === "in-progress" || activeComplaint.status === "assigned") && (
                       <button 
@@ -566,9 +654,7 @@ const AdminDashboard = () => {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center h-full py-12 text-center">
-                 <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-slate-300 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                 </svg>
+                 <AlertCircle className="h-10 w-10 text-slate-300 mb-2" />
                  <p className="text-xs font-bold text-slate-400 max-w-[200px]">Select an issue card on left to see review and assignment actions.</p>
               </div>
             )}

@@ -11,8 +11,8 @@ export const register = async (req, res) => {
       phone,
       district,
       block,
-      role, // Added role
-      department // Added department for workers
+      role, 
+      department 
     } = req.body;
 
     const existingUser = await User.findOne({ email });
@@ -42,7 +42,14 @@ export const register = async (req, res) => {
     res.status(201).json({
       success: true,
       token,
-      user,
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+        department: user.department,
+        employeeId: user.employeeId
+      }
     });
   } catch (error) {
     res.status(500).json({

@@ -14,10 +14,10 @@ const UserDirectory = () => {
 
   // Role ke hisab se title decide karna
   const getTitle = () => {
-    if (roleType === 'citizen') return '👥 Registered Citizens Directory';
-    if (roleType === 'officer') return '👥 Municipal Officers Directory';
-    if (roleType === 'worker') return '👥 Field Ground-Staff Directory';
-    return '👥 System Staff Directory';
+    if (roleType === 'citizen') return 'Registered Citizens Directory';
+    if (roleType === 'officer') return 'Municipal Officers Directory';
+    if (roleType === 'worker') return 'Field Ground-Staff Directory';
+    return ' System Staff Directory';
   };
 
   const fetchUsersByRole = async () => {
@@ -52,7 +52,7 @@ const UserDirectory = () => {
       <nav className="bg-slate-900 text-white sticky top-0 z-50 shadow-md mb-8">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
           <div className="flex items-center gap-2">
-            <span className="text-xl font-black tracking-tight">🏙️ JAN<span className="text-orange-500">SETU</span></span>
+            <span className="text-xl font-black tracking-tight"> JAN<span className="text-orange-500">SETU</span></span>
           </div>
           <Link to="/admin-dashboard" className="text-sm font-bold text-slate-300 hover:text-white transition-colors cursor-pointer">
             &larr; Back to Dashboard

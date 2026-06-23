@@ -22,13 +22,15 @@ const userSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: [
-        "citizen",
-        "officer",
-        "worker",
-        "admin",
-      ],
+      enum: ["citizen", "officer", "worker", "admin"],
       default: "citizen",
+    },
+
+    // Added a specific employee or official identifier field
+    employeeId: {
+      type: String,
+      unique: true,
+      sparse: true,
     },
 
     phone: {
@@ -42,11 +44,25 @@ const userSchema = new mongoose.Schema(
     block: {
       type: String,
     },
+
+    // Department required for both officials and ground staff
     department: {
-  type: String,
-  required: function() { return this.role === 'worker'; }, // Workers ke liye compulsory kar dein
-},
-contact: { type: String, required: true },
+      type: String,
+      required: function () {
+        return this.role === "worker";
+      },
+    },
+    ward: {
+      type: String,
+      required: function () {
+        return this.role === "officer";
+      },
+    },
+
+    contact: {
+      type: String,
+      required: true,
+    },
 
     avatar: {
       type: String,
@@ -59,7 +75,7 @@ contact: { type: String, required: true },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default mongoose.model("User", userSchema);

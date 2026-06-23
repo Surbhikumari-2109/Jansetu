@@ -148,10 +148,10 @@ export const getComplaintById = async (req, res) => {
 
 export const updateComplaintStatus = async (req, res) => {
   try {
-    // 🟢 Step 1: status ke sath-sath req.body se assigneeId ko bhi extract karein
+    //  Step 1: status ke sath-sath req.body se assigneeId ko bhi extract karein
     const { status, assigneeId } = req.body;
 
-    // 🟢 Step 2: Update object banayein jisme agar assigneeId ho toh woh bhi save ho
+    //  Step 2: Update object banayein jisme agar assigneeId ho toh woh bhi save ho
     const updateData = { status };
     if (assigneeId) {
       updateData.assignedWorker = assigneeId;

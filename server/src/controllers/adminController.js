@@ -4,8 +4,7 @@ import bcrypt from "bcryptjs";
 
 export const registerOfficial = async (req, res) => {
   try {
-    const { fullName, email, contact,password, role, department } = req.body;
-
+const { fullName, email, contact, password, role, department, ward } = req.body;
     // Validate role
     if (!role || !["officer", "worker", "admin"].includes(role)) {
       return res.status(400).json({ success: false, message: "Invalid role specified" });
@@ -29,6 +28,7 @@ export const registerOfficial = async (req, res) => {
       password: hashedPassword,
       role,
       department: role === "worker" ? department : undefined, // Save department only for workers
+      ward: role === "officer" ? ward : undefined, //Save ward only for officers
     });
 
     if (user) {

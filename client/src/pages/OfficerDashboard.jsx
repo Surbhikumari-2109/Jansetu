@@ -1,15 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { 
-  Building2, 
-  LogOut, 
-  ListOrdered, 
-  UserCircle,
-  Zap,
-  Menu,
-  X
-} from 'lucide-react';
+import { Building2, LogOut, ListOrdered,UserCircle,Zap,Menu,X} from 'lucide-react';
 
 const OfficerDashboard = () => {
   const [complaints, setComplaints] = useState([]);
@@ -33,7 +25,6 @@ const OfficerDashboard = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    alert("Thank you, Visit again! 🏙️");
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/login");
@@ -72,13 +63,19 @@ const OfficerDashboard = () => {
       try {
         const userObj = JSON.parse(storedUser);
         setUserName(userObj.fullName || userObj.name || "");
-        setOfficerId(userObj.employeeId || userObj.id || "PMC-OFF-047");
+        
+        // Dynamically retrieving profile identifier
+        const parsedId = userObj.employeeId || userObj.id || userObj._id || "";
+        setOfficerId(parsedId ? parsedId.slice(-8).toUpperCase() : "OFF-T-047");
+        
         if (userObj.ward || userObj.division) {
           setOfficerWard(`Ward ${userObj.ward || userObj.division}`);
+        } else if (userObj.district) {
+          setOfficerWard(`${userObj.district} Staff`);
         }
       } catch (error) {
         console.error("Error parsing user from localStorage", error);
-        setOfficerId("PMC-OFF-047");
+        setOfficerId("OFF-ERR-047");
       }
     }
     fetchComplaints();
@@ -152,16 +149,13 @@ const OfficerDashboard = () => {
 
   const unassignedCount = complaints.filter(c => c?.status === "pending").length;
   const inProgressCount = complaints.filter(c => c?.status === "in-progress" || c?.status === "assigned").length;
-  const resolvedTodayCount = complaints.filter(c => {
-    if (c?.status !== "resolved") return false;
-    const resolvedDate = new Date(c.updatedAt);
-    const today = new Date();
-    return resolvedDate.toDateString() === today.toDateString();
-  }).length;
+  
+  // Total Resolved (All resolved complaints instead of today-only resolution)
+  const totalResolvedCount = complaints.filter(c => c?.status === "resolved").length;
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-12">
-      {/* PREMIUM OFFICER DASHBOARD NAVBAR (Refined natively matching App-wide layout, fully responsive via drawer) */}
+      {/* PREMIUM OFFICER DASHBOARD NAVBAR */}
       <nav className="bg-[#0f172a] text-white sticky top-0 z-50 shadow-lg border-b border-slate-800">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 py-4">
           
@@ -177,12 +171,12 @@ const OfficerDashboard = () => {
           <div className="flex items-center space-x-1 sm:space-x-2">
             <span className="px-3 py-1.5 sm:px-5 sm:py-2 text-xs font-bold uppercase tracking-wider text-orange-400 bg-orange-950/40 rounded-lg border border-orange-800/40 hidden sm:flex items-center gap-2 whitespace-nowrap">
               <UserCircle className="h-5 w-5" />
-              Officer Portal
+              Officer Panel
             </span>
             
             <button
               onClick={handleLogout}
-              className="px-3 py-2 sm:px-5 sm:py-2.5 text-sm font-bold uppercase tracking-wider border-b-4 border-transparent text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors flex items-center gap-1.5 sm:gap-2 rounded-lg"
+              className="px-3 py-2 sm:px-5 sm:py-2.5 text-sm font-bold uppercase tracking-wider border-b-4 border-transparent text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors flex items-center gap-1.5 sm:gap-2 rounded-lg cursor-pointer"
               title="Logout"
             >
               <LogOut className="h-5 w-5" />
@@ -200,9 +194,13 @@ const OfficerDashboard = () => {
         </div>
       </nav>
 
-      {/*  MOBILE MENU DROPDOWN */}
+      {/* 📱 MOBILE MENU DROPDOWN */}
       {isMobileMenuOpen && (
         <div className="sm:hidden flex flex-col bg-[#0f172a] border-b border-slate-800 shadow-2xl z-[100] fixed top-[72px] left-0 right-0 px-6 py-4 space-y-3 text-white w-full border-t border-slate-800/40">
+          <span className="w-full px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-orange-400 bg-orange-950/40 rounded-lg border border-orange-800/30 flex items-center gap-3 justify-start">
+            <UserCircle className="h-4 w-4" /> Officer Portal
+          </span>
+
           <div className="w-full pt-1 pb-1 text-xs font-black text-slate-400 uppercase tracking-wider border-b border-slate-800/50 text-left flex items-center gap-2">
             <Zap className="h-4 w-4 text-orange-500" />
             <span>Quick Access</span>
@@ -232,7 +230,7 @@ const OfficerDashboard = () => {
             Municipal Officer Dashboard
           </h1>
           <p className="text-slate-500 font-bold text-sm">
-            {officerWard} | {userName ? userName : "Mr. Sitaraman Singh"}, Officer ID: {officerId}
+           {userName ? userName : "Mr. Sitaraman Singh "} | {officerWard} , Officer ID: {officerId}
           </p>
         </div>
 
@@ -250,9 +248,10 @@ const OfficerDashboard = () => {
             <p className="text-xs text-slate-500 font-bold mt-1">Being handled</p>
           </div>
 
+          {/*  STAT CARD */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border-l-4 border-l-emerald-500 border-t border-r border-b border-slate-200">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Resolved Today</p>
-            <h2 className="text-3xl font-black text-emerald-600 mt-1">{resolvedTodayCount}</h2>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Resolved</p>
+            <h2 className="text-3xl font-black text-emerald-600 mt-1">{totalResolvedCount}</h2>
             <p className="text-xs text-slate-500 font-bold mt-1">Completed</p>
           </div>
 
@@ -263,7 +262,7 @@ const OfficerDashboard = () => {
           </div>
         </div>
 
-        {/* RE-ORDERED SPLIT LAYOUT: RIGHT SIDE (DETAILS) IS NOW RENDERED ABOVE/BEFORE LIST ON MOBILE SCREENS TO AVOID SCROLLING DOWN */}
+        {/* STRUCTURAL LAYOUT */}
         <div className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-8 items-start">
           
           {/* LEFT COLUMN: PENDING COMPLAINTS LIST */}
@@ -288,7 +287,7 @@ const OfficerDashboard = () => {
                 <option value="pending"> Pending</option>
                 <option value="assigned"> Assigned</option>
                 <option value="in-progress"> In Progress</option>
-                <option value="resolved"> Resolved</option>
+                <option value="resolved">Resolved</option>
               </select>
             </div>
 
@@ -323,7 +322,7 @@ const OfficerDashboard = () => {
                         <span className="text-xs font-mono font-bold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg">
                           {complaint.complaintId}
                         </span>
-                        {/* PREMIUM VIBRANT STATUS BADGES */}
+                        {/* VIBRANT STATUS BADGES */}
                         <span className={`ml-2 text-xs font-black uppercase px-2.5 py-1 rounded-lg tracking-wider ${
                           complaint.status === 'pending' ? 'bg-red-100 text-red-600' :
                           complaint.status === 'assigned' ? 'bg-blue-100 text-blue-600' :
@@ -374,7 +373,7 @@ const OfficerDashboard = () => {
             </div>
           </div>
 
-          {/* RIGHT COLUMN: ASSIGNMENT / MANAGING CONTAINER (Pinned sticky directly below header for non-disruptive viewing on mobile) */}
+          {/* RIGHT COLUMN: ASSIGNMENT / MANAGING CONTAINER */}
           <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm sticky top-28 w-full h-fit">
             {activeComplaint ? (
               <div>
@@ -411,7 +410,7 @@ const OfficerDashboard = () => {
                   </div>
                 </div>
 
-                {/* CONDITIONALLY RENDERED ASSIGNMENT PANEL */}
+                {/* WORKER ROUTE/ASSIGNMENT PANEL CONTAINING 9 DEPARTMENTS */}
                 {activeComplaint.status === "pending" ? (
                   <form onSubmit={handleAssignTask} className="space-y-5">
                     <div>
@@ -459,7 +458,7 @@ const OfficerDashboard = () => {
 
                     <div>
                       <label className="block text-xs font-black text-slate-400 uppercase tracking-wider mb-1.5">
-                        Assign Worker (Matching Department)
+                        Assign Worker 
                       </label>
                       <select
                         value={assignedWorkerId}
@@ -477,7 +476,7 @@ const OfficerDashboard = () => {
                       </select>
                       {department && workers.filter((w) => w.department === department).length === 0 && (
                         <p className="text-red-600 font-bold text-xs mt-1">
-                          No workers available for this department!
+                           No workers available for this department!
                         </p>
                       )}
                     </div>
@@ -516,9 +515,9 @@ const OfficerDashboard = () => {
                     </button>
                   </form>
                 ) : activeComplaint.status === "resolved" ? (
-                  /*  COMPLAINT RESOLVED - DISPLAY READONLY DETAILS EXCLUSIVELY W/ NO UNNECESSARY ACTIONS */
-                  <div className="space-y-4">
-                 {/* Display assigned worker metadata for resolved task inspection */}
+                  /*  COMPLAINT RESOLVED - DISPLAY READONLY DETAILS EXCLUSIVELY */
+                  <div className="space-y-4">              
+                     {/* Display assigned worker metadata for resolved task inspection */}
                     <div className="bg-slate-50 border border-slate-100 p-4 rounded-xl space-y-2">
                       <h4 className="text-xs font-black text-slate-500 uppercase tracking-wider"> Ground Staff Involved</h4>
                       <div className="text-xs font-bold text-slate-700 space-y-1">
@@ -527,7 +526,6 @@ const OfficerDashboard = () => {
                       </div>
                     </div>
                     <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-xl text-center">
-                      {/* <span className="text-2xl mb-2  flex justify-center">🟢</span> */}
                       <p className="text-xs font-black text-emerald-800 uppercase tracking-wider">Complaint has been successfully resolved and closed.</p>
                     </div>
                   </div>
@@ -565,7 +563,7 @@ const OfficerDashboard = () => {
         </div>
       </div>
 
-      {/* ❌ FULLSCREEN LIGHTBOX MODAL */}
+      {/* FULLSCREEN LIGHTBOX MODAL */}
       {selectedImage && (
         <div
           className="fixed inset-0 bg-slate-900/90 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity"
