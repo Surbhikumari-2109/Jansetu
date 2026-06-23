@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { 
+  Building2, 
+  LogOut, 
+  Menu, 
+  X, 
+  ListOrdered, 
+  UserCircle,
+  Zap,
+  MousePointer
+} from 'lucide-react';
 
 const WorkerDashboard = () => {
   const [tasks, setTasks] = useState([]);
@@ -10,6 +20,7 @@ const WorkerDashboard = () => {
   const [workerName, setWorkerName] = useState('Worker');
   const [workerDept, setWorkerDept] = useState('Municipal Staff');
   const [isLoading, setIsLoading] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   // Fetch tasks assigned specifically to this worker
@@ -55,7 +66,7 @@ const WorkerDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `http://localhost:5000/api/complaints/${selectedTask._id}/worker-progress`,
+        `http://localhost:5000/api/complaints/${selectedTask._id || selectedTask._id}/worker-progress`,
         { status: workStatus, progressNote: statusNote },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -85,19 +96,29 @@ const WorkerDashboard = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 pb-12">
-      {/* TOP NAVIGATION */}
-      <nav className="bg-slate-900 text-white sticky top-0 z-50 shadow-md mb-8">
-        <div className="max-w-7xl mx-auto flex justify-between items-center px-6">
-          <div className="flex items-center gap-2 py-4 border-r border-slate-700 pr-8">
-            <span className="text-xl font-black tracking-tight">🏙️ JAN<span className="text-orange-500">SETU</span></span>
+      {/* TOP NAVIGATION (Stays perfectly locked at the top using fixed positioning, preventing out-of-view scroll issues) */}
+      <nav className="bg-slate-900 text-white fixed top-0 left-0 right-0 z-50 shadow-md">
+        <div className="max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 py-2.5">
+          
+          {/* Logo */}
+          <div className="flex items-center gap-2 border-r border-slate-700 pr-4 sm:pr-8 py-0.5">
+            <Building2 className="h-5 w-5 sm:h-6 w-6 text-orange-500" />
+            <span className="text-lg sm:text-xl font-black tracking-tight">JAN<span className="text-orange-500">SETU</span></span>
           </div>
-          <div className="flex items-center space-x-1 px-4">
-            <span className="px-4 py-4 text-sm font-bold uppercase tracking-wider text-blue-400 bg-blue-950/30 rounded-lg">
-              🛠️ Field Worker Portal
+
+          {/* Worker Portal Badge - Anchored directly onto main navbar permanently outside menu for all screen widths */}
+          <div className="flex items-center pl-2 sm:pl-4 pr-1 sm:pr-2">
+            <span className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-bold uppercase tracking-wider text-blue-400 bg-blue-950/30 rounded-lg border border-blue-800/30 flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">
+              <UserCircle className="h-4 w-4 sm:h-5 w-5" />
+              Worker Portal
             </span>
+          </div>
+
+          {/* Desktop Logout Button */}
+          <div className="hidden sm:flex items-center space-x-1 px-4 border-l border-slate-800">
             <button 
               onClick={handleLogout} 
-              className="px-4 py-4 text-sm font-bold uppercase tracking-wider text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors flex items-center gap-2"
+              className="px-4 py-2 text-sm font-bold uppercase tracking-wider text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors flex items-center gap-2 rounded-lg"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -105,10 +126,47 @@ const WorkerDashboard = () => {
               Logout
             </button>
           </div>
+
+          {/* Mobile Hamburger Menu Toggle */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="sm:hidden text-slate-300 hover:text-white focus:outline-none p-1.5 rounded-lg border border-slate-700"
+          >
+            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-6">
+      {/* 📱 MOBILE MENU DROPDOWN (Strictly opens directly underneath header row, independent of scrolling pane) */}
+      {isMobileMenuOpen && (
+        <div className="sm:hidden flex flex-col bg-slate-900 border-b border-slate-800 shadow-xl z-[100] px-6 py-4 space-y-3 text-white w-full fixed top-[50px] left-0 right-0 border-t border-slate-800/40">
+          
+          <div className="w-full pt-1 pb-1 text-xs font-black text-slate-400 uppercase tracking-wider border-b border-slate-800/50 text-left flex items-center gap-2">
+            <Zap className="h-4 w-4 text-orange-500" />
+            <span>Quick Access</span>
+          </div>
+
+          <a 
+            href="#assigned-tasks-section" 
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="w-full py-3 text-sm font-bold uppercase tracking-wider text-slate-300 hover:text-white transition-colors text-left border-b border-slate-800/40 flex items-center gap-3 rounded"
+          >
+            <ListOrdered className="h-4 w-4" /> My Assigned Tasks
+          </a>
+
+          <button 
+            onClick={handleLogout} 
+            className="w-full py-3 text-sm font-bold uppercase tracking-wider text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors flex items-center justify-start gap-3 rounded border-t border-slate-800/60"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            Logout
+          </button>
+        </div>
+      )}
+
+      <main className="max-w-7xl mx-auto px-6 pt-24">
         {/* WORKER DETAILS HEADER */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -131,7 +189,7 @@ const WorkerDashboard = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <div id="assigned-tasks-section" className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* ASSIGNED TASKS LIST */}
           <div className="lg:col-span-2 space-y-5">
             <h2 className="text-xl font-black text-slate-900">My Assigned Tasks</h2>
@@ -207,7 +265,7 @@ const WorkerDashboard = () => {
                     value={statusNote}
                     onChange={(e) => setStatusNote(e.target.value)}
                     placeholder="Add breakdown actions, progress percentage, or notes for officials..."
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl font-medium outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500"
+                    className="w-full px-4 py-3 border border-slate-200 rounded-xl font-medium outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 resize-y"
                     required
                   />
                 </div>
@@ -233,7 +291,7 @@ const WorkerDashboard = () => {
               </form>
             ) : (
               <div className="text-center py-12">
-                <span className="text-4xl mb-3 block">👆</span>
+                <span className="text-4xl mb-3 block text-slate-400 flex justify-center"><MousePointer className="h-10 w-10 text-slate-400 animate-pulse" /></span>
                 <p className="text-slate-500 font-bold text-sm">Select a task from your list to update its operational status.</p>
               </div>
             )}

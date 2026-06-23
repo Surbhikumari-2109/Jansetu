@@ -381,7 +381,7 @@ const AdminDashboard = () => {
                     className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 font-medium outline-none bg-white"
                     required
                   >
-                    <option value="">-- Select Field Department --</option>
+                    <option value="">-- Select Department --</option>
                     <option value="Water Supply Board">Water Supply Board</option>
                     <option value="Sanitation & Waste Management">Sanitation & Waste Management</option>
                     <option value="Roads & Infrastructure">Roads & Infrastructure</option>

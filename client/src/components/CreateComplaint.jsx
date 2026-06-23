@@ -1,16 +1,29 @@
 import { useState, useRef } from "react";
 import axios from "axios";
+import { 
+  Car, 
+  Trash2, 
+  Lightbulb, 
+  Droplet, 
+  TriangleAlert, 
+  Building, 
+  Siren, 
+  Bone, 
+  CloudRain,
+  Camera
+} from "lucide-react";
 
+// CATEGORY ARRAY UPDATED WITH PROFESSIONAL LUCIDE REACT ICONS
 const categories = [
-  { name: "Road Damage", icon: "🛣️" },
-  { name: "Garbage Collection", icon: "🗑️" },
-  { name: "Street Light Issue", icon: "💡" },
-  { name: "Water Leakage", icon: "💧" },
-  { name: "Drainage Problem", icon: "🚧" },
-  { name: "Illegal Construction", icon: "🏗️" },
-  { name: "Public Toilet Issue", icon: "🚽" },
-  { name: "Stray Animals", icon: "🐕" },
-  { name: "Pollution Complaint", icon: "💨" },
+  { name: "Road Damage", icon: <Car className="h-6 w-6 mx-auto" /> },
+  { name: "Garbage Collection", icon: <Trash2 className="h-6 w-6 mx-auto" /> },
+  { name: "Street Light Issue", icon: <Lightbulb className="h-6 w-6 mx-auto" /> },
+  { name: "Water Leakage", icon: <Droplet className="h-6 w-6 mx-auto" /> },
+  { name: "Drainage Problem", icon: <TriangleAlert className="h-6 w-6 mx-auto" /> },
+  { name: "Illegal Construction", icon: <Building className="h-6 w-6 mx-auto" /> },
+  { name: "Public Toilet Issue", icon: <Siren className="h-6 w-6 mx-auto" /> },
+  { name: "Stray Animals", icon: <Bone className="h-6 w-6 mx-auto" /> },
+  { name: "Pollution Complaint", icon: <CloudRain className="h-6 w-6 mx-auto" /> },
 ];
 
 const CreateComplaint = () => {
@@ -90,7 +103,7 @@ const CreateComplaint = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-8 font-sans text-slate-900 pb-12">
+    <div className="max-w-4xl mx-auto p-4 md:p-8 font-sans text-slate-900 pb-12 pt-6 sm:pt-12">
       
       <div className="mb-8">
         <h1 className="text-3xl font-black tracking-tight mb-2">📋 Submit New Complaint</h1>
@@ -115,14 +128,14 @@ const CreateComplaint = () => {
               <div
                 key={cat.name}
                 onClick={() => handleCategorySelect(cat.name)}
-                className={`p-4 border-2 rounded-xl text-center cursor-pointer transition-all ${
+                className={`p-4 border-2 rounded-xl text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-2 ${
                   formData.category === cat.name
                     ? "border-orange-500 bg-orange-50 text-orange-700 shadow-sm"
                     : "border-slate-100 bg-slate-50 text-slate-600 hover:border-orange-200 hover:bg-white"
                 }`}
               >
                 <span className="block text-2xl mb-1">{cat.icon}</span>
-                <span className="text-sm font-bold">{cat.name}</span>
+                <span className="text-sm font-bold leading-tight">{cat.name}</span>
               </div>
             ))}
           </div>
@@ -195,7 +208,7 @@ const CreateComplaint = () => {
             className="w-full border-2 border-dashed border-slate-300 bg-slate-50 hover:bg-orange-50 hover:border-orange-300 rounded-xl py-8 text-slate-500 hover:text-orange-600 transition-all focus:outline-none group"
           >
             <div className="flex flex-col items-center justify-center gap-2">
-              <span className="text-3xl group-hover:scale-110 transition-transform">📸</span>
+              <Camera className="h-8 w-8 group-hover:scale-110 transition-transform" />
               <span className="font-bold text-sm">Click to upload photos (JPG, PNG)</span>
             </div>
           </button>
@@ -235,7 +248,6 @@ const CreateComplaint = () => {
           {isSubmitting ? "Uploading..." : " Submit Complaint"}
         </button>
       </form>
-
     </div>
   );
 };
