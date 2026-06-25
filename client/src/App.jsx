@@ -13,9 +13,6 @@ import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UserDirectory from './pages/UserDirectory';
 
-// Inside your <Routes> block:
-
-
 function App() {
   return (
     <BrowserRouter>
