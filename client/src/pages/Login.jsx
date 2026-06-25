@@ -54,7 +54,7 @@
           
           const loggedInRole = res.data.user.role;
 
-          // 🛑 STRIKE 1: Official Portal Validation
+          //  STRIKE 1: Official Portal Validation
           if (portalType === 'official') {
             if (loggedInRole !== 'admin' && loggedInRole !== 'officer') {
               alert('Access Denied: You are not authorized to use the Official Staff Portal.');
@@ -71,7 +71,7 @@
               navigate('/officer');
             }
           } 
-          // 🛑 STRIKE 2: Public/Citizen Portal Validation
+          //  STRIKE 2: Public/Citizen Portal Validation
           else {
             if (isLogin) {
               if (loggedInRole !== 'citizen') {
@@ -110,7 +110,7 @@
           <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
             <Link to="/" className="text-3xl font-black tracking-tight text-slate-900 cursor-pointer inline-block mb-1">
               <span className="flex items-center gap-1 justify-center">
-                <Building2 className="h-8 w-8 text-slate-900" /> 
+                <Building2 className="h-8 w-8 text-orange-600" /> 
                 JAN<span className="text-orange-600">SETU</span>
               </span>
             </Link>
@@ -174,7 +174,7 @@
                       if (formErrors.email) setFormErrors({ ...formErrors, email: '' });
                     }} 
                     className="appearance-none block w-full px-4 py-3 border border-slate-300 rounded-xl shadow-sm focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 font-medium outline-none bg-slate-50/50" 
-                    placeholder={portalType === 'official' ? 'officer@jansetu.gov.in' : 'you@example.com'} 
+                    placeholder={portalType === 'official' ? 'officer@jansetu.gov.in' : 'xyz@gmail.com'} 
                   />
                   {formErrors.email && <p className="text-red-600 font-extrabold text-xs mt-1.5 flex items-center gap-1"><AlertCircle className="h-3.5 w-3.5" />{formErrors.email}</p>}
                 </div>

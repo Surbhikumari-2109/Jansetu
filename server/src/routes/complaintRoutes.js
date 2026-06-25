@@ -16,7 +16,7 @@ import { upload } from "../middleware/uploadMiddleware.js";
 
 const router = express.Router();
 
-// 🟢 Worker - Get Tasks assigned to them (Locked to workers only)
+//  Worker - Get Tasks assigned to them (Locked to workers only)
 router.get(
   "/worker-tasks",
   protect,
@@ -24,7 +24,7 @@ router.get(
   getWorkerTasks
 );
 
-// 🟢 Worker - Update progress of assigned task (Locked to workers only)
+// Worker - Update progress of assigned task (Locked to workers only)
 router.put(
   "/:id/worker-progress",
   protect,
@@ -81,5 +81,6 @@ router.put(
   authorize("officer", "admin"),
   assignComplaint
 );
+
 
 export default router;
