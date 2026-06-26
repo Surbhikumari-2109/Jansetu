@@ -28,7 +28,7 @@ const WorkerDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       // Adjust endpoint to match your backend worker route (e.g., /api/complaints/worker-tasks)
-      const res = await axios.get('${import.meta.env.VITE_API_BASE_URL}/api/complaints/worker-tasks', {
+      const res = await axios.get('https://jansetu-eta0.onrender.com/api/complaints/worker-tasks', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setTasks(res.data.complaints || []);
@@ -66,7 +66,7 @@ const WorkerDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/complaints/${selectedTask._id || selectedTask._id}/worker-progress`,
+        `https://jansetu-eta0.onrender.com/api/complaints/${selectedTask._id || selectedTask._id}/worker-progress`,
         { status: workStatus, progressNote: statusNote },
         { headers: { Authorization: `Bearer ${token}` } }
       );

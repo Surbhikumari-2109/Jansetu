@@ -29,7 +29,7 @@ const UserDirectory = () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/admin/users-by-role?role=${roleType}`, {
+      const res = await axios.get(`https://jansetu-eta0.onrender.com/api/admin/users-by-role?role=${roleType}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUsers(res.data.users || []);

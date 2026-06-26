@@ -75,7 +75,7 @@ const CreateComplaint = () => {
       }
 
       await axios.post(
-        "${import.meta.env.VITE_API_BASE_URL}/api/complaints/create",
+        "https://jansetu-eta0.onrender.com/api/complaints/create",
         data,
         {
           headers: {

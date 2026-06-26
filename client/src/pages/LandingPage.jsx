@@ -29,7 +29,7 @@ const LandingPage = () => {
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        const baseURL = import.meta.env.VITE_API_BASE_URL || '${import.meta.env.VITE_API_BASE_URL}';
+        const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://jansetu-eta0.onrender.com';
         const res = await axios.get(`${baseURL}/api/stats/system-metrics`);
         if (res.data.success) {
           setMetrics(res.data.stats);

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API =
-  "${import.meta.env.VITE_API_BASE_URL}/api/complaints";
+  "https://jansetu-eta0.onrender.com/api/complaints";
 
 export const getMyComplaints =
   async (token) => {

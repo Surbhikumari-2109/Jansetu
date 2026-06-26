@@ -45,7 +45,7 @@ const Dashboard = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "${import.meta.env.VITE_API_BASE_URL}/api/complaints/my-complaints",
+          "https://jansetu-eta0.onrender.com/api/complaints/my-complaints",
           {
             headers: { Authorization: `Bearer ${token}` },
           }

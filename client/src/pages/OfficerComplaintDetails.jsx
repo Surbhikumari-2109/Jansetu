@@ -20,7 +20,7 @@ const OfficerComplaintDetails = () => {
 
           const res =
             await axios.get(
-              `${import.meta.env.VITE_API_BASE_URL}/api/complaints/${id}`,
+              `https://jansetu-eta0.onrender.com/api/complaints/${id}`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,

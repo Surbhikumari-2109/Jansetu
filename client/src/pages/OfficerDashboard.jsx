@@ -34,7 +34,7 @@ const OfficerDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        "${import.meta.env.VITE_API_BASE_URL}/api/complaints/all",
+        "https://jansetu-eta0.onrender.com/api/complaints/all",
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setComplaints(res.data.complaints || []);
@@ -47,7 +47,7 @@ const OfficerDashboard = () => {
   const fetchWorkers = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("${import.meta.env.VITE_API_BASE_URL}/api/admin/workers",
+      const res = await axios.get("https://jansetu-eta0.onrender.com/api/admin/workers",
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setWorkers(res.data.workers || []);
@@ -103,7 +103,7 @@ const OfficerDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/complaints/${activeComplaint._id}/assign`,
+        `https://jansetu-eta0.onrender.com/api/complaints/${activeComplaint._id}/assign`,
         { 
           workerId: assignedWorkerId,
           priority,
@@ -125,7 +125,7 @@ const OfficerDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/complaints/${id}/status`,
+        `https://jansetu-eta0.onrender.com/api/complaints/${id}/status`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );
