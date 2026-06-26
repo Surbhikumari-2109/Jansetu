@@ -11,8 +11,8 @@ export const register = async (req, res) => {
       phone,
       district,
       block,
-      role, 
-      department 
+      role,
+      department,
     } = req.body;
 
     const existingUser = await User.findOne({ email });
@@ -33,8 +33,8 @@ export const register = async (req, res) => {
       phone,
       district,
       block,
-      role: role || 'citizen', // Default to citizen if no role provided
-      department: role === 'worker' ? department : undefined // Only save department if the user is a worker
+      role: role || "citizen", // Default to citizen if no role provided
+      department: role === "worker" ? department : undefined, // Only save department if the user is a worker
     });
 
     const token = generateToken(user._id, user.role);
@@ -48,8 +48,8 @@ export const register = async (req, res) => {
         email: user.email,
         role: user.role,
         department: user.department,
-        employeeId: user.employeeId
-      }
+        employeeId: user.employeeId,
+      },
     });
   } catch (error) {
     res.status(500).json({
@@ -66,7 +66,7 @@ export const login = async (req, res) => {
     const { email, password, portalType } = req.body;
 
     const user = await User.findOne({ email });
-    
+
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -75,14 +75,13 @@ export const login = async (req, res) => {
     }
 
     // --- NEW: Security Check for Official Portal ---
-    const isOfficialPortal = portalType === 'official';
-    const isOfficialUser = ['officer', 'admin'].includes(user.role);
-
+    const isOfficialPortal = portalType === "official";
+    const isOfficialUser = ["officer", "admin", "worker"].includes(user.role);
     if (isOfficialPortal && !isOfficialUser) {
-       return res.status(403).json({ 
-         success: false,
-         message: "Access denied. You do not have official credentials." 
-       });
+      return res.status(403).json({
+        success: false,
+        message: "Access denied. You do not have official credentials.",
+      });
     }
     // -----------------------------------------------
 
