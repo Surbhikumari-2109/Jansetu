@@ -40,10 +40,26 @@ const Login = () => {
     setFormErrors({});
 
     try {
-      // Common Login API Call
+      //  CONDITION 1: CITIZEN REGISTRATION
+      if (!isLogin && portalType === "public") {
+        await axios.post("https://jansetu-eta0.onrender.com/api/auth/register", {
+          fullName,
+          email,
+          password,
+          role: "citizen",
+        });
+
+        alert("Registration successful! Please sign in.");
+        setIsLogin(true);
+        setIsLoading(false);
+        return;
+      }
+
+      //  CONDITION 2: LOGIN
       const res = await axios.post("https://jansetu-eta0.onrender.com/api/auth/login", {
         email,
         password,
+        portalType: portalType, // Backend ko batayega ki public portal hai ya official
       });
 
       const loggedInRole = res.data.user.role;
