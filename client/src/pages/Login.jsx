@@ -41,7 +41,8 @@ const Login = () => {
 
     try {
       // Common Login API Call
-      const res = await axios.post("${import.meta.env.VITE_API_BASE_URL}/api/auth/login", {
+      const res = await axios.post("https://jansetu-eta0.onrender.com/api/auth/login", {
+      // const res = await axios.post("${import.meta.env.VITE_API_BASE_URL}/api/auth/login", {
         email,
         password,
       });
