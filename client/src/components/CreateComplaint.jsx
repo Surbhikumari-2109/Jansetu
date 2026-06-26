@@ -106,7 +106,7 @@ const CreateComplaint = () => {
     <div className="max-w-4xl mx-auto p-4 md:p-8 font-sans text-slate-900 pb-12 pt-6 sm:pt-12">
       
       <div className="mb-8">
-        <h1 className="text-3xl font-black tracking-tight mb-2">📋 Submit New Complaint</h1>
+        <h1 className="text-3xl font-black tracking-tight mb-2"> Submit New Complaint</h1>
         <p className="text-slate-500 font-medium">Report a civic issue in your ward and get it fixed fast.</p>
       </div>
 
@@ -175,8 +175,7 @@ const CreateComplaint = () => {
             <input type="text" name="block" placeholder="Block" value={formData.block} onChange={handleChange} className="border border-slate-200 bg-slate-50 p-3.5 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all" required />
             <input type="text" name="ward" placeholder="Ward No. / Area" value={formData.ward} onChange={handleChange} className="border border-slate-200 bg-slate-50 p-3.5 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all" required />
             <input type="text" name="address" placeholder="Nearest Landmark or Address" value={formData.address} onChange={handleChange} className="border border-slate-200 bg-slate-50 p-3.5 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all" required />
-            <input type="number" step="any" name="latitude" placeholder="Latitude (Optional)" value={formData.latitude} onChange={handleChange} className="border border-slate-200 bg-slate-50 p-3.5 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all" />
-            <input type="number" step="any" name="longitude" placeholder="Longitude (Optional)" value={formData.longitude} onChange={handleChange} className="border border-slate-200 bg-slate-50 p-3.5 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all" />
+            
           </div>
         </div>
 

@@ -200,7 +200,6 @@ const Dashboard = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3">
             <span>Welcome, {userName ? userName : "Citizen"}</span>
-            <span className="text-orange-500 animate-pulse">👋</span>
           </h1>
           <p className="text-slate-500 font-medium mt-1">
             Manage your civic reports and track municipal responses.
