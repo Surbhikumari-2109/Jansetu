@@ -57,7 +57,6 @@ const ComplaintTracker = () => {
   if (complaints.length === 0) {
     return (
       <div className="text-center py-20 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-        <span className="text-5xl mb-4 block">📭</span>
         <h3 className="text-xl font-black text-slate-800 mb-2">No complaints found</h3>
         <p className="text-slate-500 font-medium">You haven't reported any civic issues yet. Head over to the 'New Complaint' tab to get started.</p>
       </div>

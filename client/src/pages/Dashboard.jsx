@@ -165,7 +165,7 @@ const Dashboard = () => {
       {isMobileMenuOpen && (
         <div className="sm:hidden flex flex-col bg-slate-900 border-b border-slate-800 shadow-lg z-[100] fixed top-[56px] left-0 right-0 px-4 py-4 space-y-2 text-white overflow-y-auto max-h-[calc(100vh-56px)]">
           <div className="w-full px-2 pt-1 pb-1 text-xs font-black text-slate-400 uppercase tracking-wider border-b border-slate-800/50 text-left">
-            ⚡ Quick Access
+             Quick Access
           </div>
           <button
             onClick={handleNewComplaintClick}
