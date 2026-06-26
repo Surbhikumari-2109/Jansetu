@@ -50,7 +50,7 @@ const Login = () => {
 
       //  STRIKE 1: Official Portal Validation
       if (portalType === "official") {
-        if (loggedInRole !== "admin" && loggedInRole !== "officer") {
+        if (loggedInRole !== "admin" && loggedInRole !== "officer" && loggedInRole !== "worker") {
           alert(
             "Access Denied: You are not authorized to use the Official Staff Portal.",
           );
