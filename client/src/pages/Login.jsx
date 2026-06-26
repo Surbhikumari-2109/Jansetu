@@ -10,6 +10,7 @@ const Login = () => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [contact, setContact] = useState("");
 
   const [formErrors, setFormErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
@@ -42,12 +43,16 @@ const Login = () => {
     try {
       //  CONDITION 1: CITIZEN REGISTRATION
       if (!isLogin && portalType === "public") {
-        await axios.post("https://jansetu-eta0.onrender.com/api/auth/register", {
-          fullName,
-          email,
-          password,
-          role: "citizen",
-        });
+        await axios.post(
+          "https://jansetu-eta0.onrender.com/api/auth/register",
+          {
+            fullName,
+            email,
+            password,
+            contact,
+            role: "citizen",
+          },
+        );
 
         alert("Registration successful! Please sign in.");
         setIsLogin(true);
@@ -56,17 +61,24 @@ const Login = () => {
       }
 
       //  CONDITION 2: LOGIN
-      const res = await axios.post("https://jansetu-eta0.onrender.com/api/auth/login", {
-        email,
-        password,
-        portalType: portalType, // Backend ko batayega ki public portal hai ya official
-      });
+      const res = await axios.post(
+        "https://jansetu-eta0.onrender.com/api/auth/login",
+        {
+          email,
+          password,
+          portalType: portalType, // Backend ko batayega ki public portal hai ya official
+        },
+      );
 
       const loggedInRole = res.data.user.role;
 
       //  STRIKE 1: Official Portal Validation
       if (portalType === "official") {
-        if (loggedInRole !== "admin" && loggedInRole !== "officer" && loggedInRole !== "worker") {
+        if (
+          loggedInRole !== "admin" &&
+          loggedInRole !== "officer" &&
+          loggedInRole !== "worker"
+        ) {
           alert(
             "Access Denied: You are not authorized to use the Official Staff Portal.",
           );
@@ -82,7 +94,7 @@ const Login = () => {
         } else if (loggedInRole === "officer") {
           navigate("/officer");
         } else if (loggedInRole === "worker") {
-          navigate("/worker-dashboard"); 
+          navigate("/worker-dashboard");
         }
       }
       //  STRIKE 2: Public/Citizen Portal Validation
@@ -105,12 +117,15 @@ const Login = () => {
           navigate("/citizen-dashboard");
         } else {
           // CITIZEN REGISTRATION
-          await axios.post("https://jansetu-eta0.onrender.com/api/auth/register", {
-            fullName,
-            email,
-            password,
-            role: "citizen",
-          });
+          await axios.post(
+            "https://jansetu-eta0.onrender.com/api/auth/register",
+            {
+              fullName,
+              email,
+              password,
+              role: "citizen",
+            },
+          );
 
           alert("Registration successful! Please sign in.");
           setIsLogin(true);
@@ -196,6 +211,21 @@ const Login = () => {
                     {formErrors.fullName}
                   </p>
                 )}
+              </div>
+            )}
+
+            {portalType === "public" && !isLogin && (
+              <div className="mt-4">
+                <label className="block text-sm font-bold text-slate-700 mb-1">
+                  Contact Number
+                </label>
+                <input
+                  type="text"
+                  value={contact}
+                  onChange={(e) => setContact(e.target.value)}
+                  className="appearance-none block w-full px-4 py-3 border border-slate-300 rounded-xl shadow-sm focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 font-medium outline-none bg-slate-50/50"
+                  placeholder="9876543210"
+                />
               </div>
             )}
 
