@@ -99,9 +99,9 @@ const complaintSchema = new mongoose.Schema(
       required: true,
     },
 
-    latitude: Number,
+    pincode: Number,
 
-    longitude: Number,
+    
 
     citizen: {
       type: mongoose.Schema.Types.ObjectId,

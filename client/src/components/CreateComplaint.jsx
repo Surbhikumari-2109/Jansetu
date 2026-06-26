@@ -13,7 +13,6 @@ import {
   Camera
 } from "lucide-react";
 
-// CATEGORY ARRAY UPDATED WITH PROFESSIONAL LUCIDE REACT ICONS
 const categories = [
   { name: "Road Damage", icon: <Car className="h-6 w-6 mx-auto" /> },
   { name: "Garbage Collection", icon: <Trash2 className="h-6 w-6 mx-auto" /> },
@@ -40,8 +39,7 @@ const CreateComplaint = () => {
     block: "",
     ward: "",
     address: "",
-    latitude: "",
-    longitude: "",
+    pincode: "", 
   });
 
   const handleChange = (e) => {
@@ -58,10 +56,8 @@ const CreateComplaint = () => {
       alert("Please select a category from the grid.");
       return;
     }
-
     setIsSubmitting(true);
     setSuccessMsg("");
-
     try {
       const token = localStorage.getItem("token");
       const data = new FormData();
@@ -86,17 +82,16 @@ const CreateComplaint = () => {
       );
 
       setSuccessMsg("Complaint successfully registered! Track its status in your dashboard.");
-      
       // Reset form
       setFormData({
         title: "", description: "", category: "", district: "",
-        block: "", ward: "", address: "", latitude: "", longitude: "",
+        block: "", ward: "", address: "", pincode: "", 
       });
       setImages([]);
 
     } catch (error) {
       console.log(error);
-      alert("Failed to submit complaint. Please try again.");
+      alert(error.response?.data?.message || "Failed to submit complaint. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -175,7 +170,16 @@ const CreateComplaint = () => {
             <input type="text" name="block" placeholder="Block" value={formData.block} onChange={handleChange} className="border border-slate-200 bg-slate-50 p-3.5 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all" required />
             <input type="text" name="ward" placeholder="Ward No. / Area" value={formData.ward} onChange={handleChange} className="border border-slate-200 bg-slate-50 p-3.5 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all" required />
             <input type="text" name="address" placeholder="Nearest Landmark or Address" value={formData.address} onChange={handleChange} className="border border-slate-200 bg-slate-50 p-3.5 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all" required />
-            
+            <input 
+              type="text" 
+              name="pincode" 
+              placeholder="Area Pincode (e.g. 462001)" 
+              maxLength="6"
+              value={formData.pincode} 
+              onChange={handleChange} 
+              className="border border-slate-200 bg-slate-50 p-3.5 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all" 
+              required
+            />
           </div>
         </div>
 
