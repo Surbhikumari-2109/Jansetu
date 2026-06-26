@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API =
-  "http://localhost:5000/api/complaints";
+  "${import.meta.env.VITE_API_BASE_URL}/api/complaints";
 
 export const getMyComplaints =
   async (token) => {

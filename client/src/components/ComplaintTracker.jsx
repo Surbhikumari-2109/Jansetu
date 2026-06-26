@@ -14,7 +14,7 @@ const ComplaintTracker = () => {
   const fetchMyComplaints = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/complaints/my-complaints", {
+      const res = await axios.get("${import.meta.env.VITE_API_BASE_URL}/api/complaints/my-complaints", {
         headers: { Authorization: `Bearer ${token}` }
       });
       

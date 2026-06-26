@@ -34,7 +34,7 @@ const OfficerDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        "http://localhost:5000/api/complaints/all",
+        "${import.meta.env.VITE_API_BASE_URL}/api/complaints/all",
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setComplaints(res.data.complaints || []);
@@ -47,7 +47,7 @@ const OfficerDashboard = () => {
   const fetchWorkers = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/admin/workers",
+      const res = await axios.get("${import.meta.env.VITE_API_BASE_URL}/api/admin/workers",
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setWorkers(res.data.workers || []);
@@ -103,7 +103,7 @@ const OfficerDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5000/api/complaints/${activeComplaint._id}/assign`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/complaints/${activeComplaint._id}/assign`,
         { 
           workerId: assignedWorkerId,
           priority,
@@ -125,7 +125,7 @@ const OfficerDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5000/api/complaints/${id}/status`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/complaints/${id}/status`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );

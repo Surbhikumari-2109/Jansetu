@@ -41,7 +41,7 @@ const Login = () => {
 
     try {
       // Common Login API Call
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await axios.post("${import.meta.env.VITE_API_BASE_URL}/api/auth/login", {
         email,
         password,
       });
@@ -89,7 +89,7 @@ const Login = () => {
           navigate("/citizen-dashboard");
         } else {
           // CITIZEN REGISTRATION
-          await axios.post("http://localhost:5000/api/auth/register", {
+          await axios.post("${import.meta.env.VITE_API_BASE_URL}/api/auth/register", {
             fullName,
             email,
             password,

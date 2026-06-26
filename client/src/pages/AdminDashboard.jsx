@@ -62,12 +62,12 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       
-      const statsRes = await axios.get('http://localhost:5000/api/admin/stats', {
+      const statsRes = await axios.get('${import.meta.env.VITE_API_BASE_URL}/api/admin/stats', {
         headers: { Authorization: 'Bearer ' + token }
       });
       setStats(statsRes.data.stats);
 
-      const compRes = await axios.get('http://localhost:5000/api/complaints/all', {
+      const compRes = await axios.get('${import.meta.env.VITE_API_BASE_URL}/api/complaints/all', {
         headers: { Authorization: 'Bearer ' + token }
       });
       setComplaints(compRes.data.complaints || []);
@@ -101,7 +101,7 @@ const AdminDashboard = () => {
       }
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get(`http://localhost:5000/api/admin/users-by-department?department=${encodeURIComponent(activeComplaint.department)}`, {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/admin/users-by-department?department=${encodeURIComponent(activeComplaint.department)}`, {
           headers: { Authorization: 'Bearer ' + token }
         });
         setDeptUsers(res.data.users || []);
@@ -157,7 +157,7 @@ const AdminDashboard = () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:5000/api/admin/register-official', formData, {
+      await axios.post('${import.meta.env.VITE_API_BASE_URL}/api/admin/register-official', formData, {
         headers: { Authorization: 'Bearer ' + token }
       });
       alert(' Registered successfully!');
@@ -183,7 +183,7 @@ const AdminDashboard = () => {
       const payload = { status: nextStatus };
       if (assigneeId) payload.assigneeId = assigneeId;
 
-      await axios.put(`http://localhost:5000/api/complaints/${id}/status`, payload, {
+      await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/complaints/${id}/status`, payload, {
         headers: { Authorization: 'Bearer ' + token }
       });
       alert(`Complaint status updated to ${nextStatus}`);
@@ -203,7 +203,7 @@ const AdminDashboard = () => {
     setIsDirModalOpen(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get(`http://localhost:5000/api/admin/users-by-role?role=${roleType}`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/admin/users-by-role?role=${roleType}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setDirUsersList(res.data.users || []);
